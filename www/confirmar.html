@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="es" class="fullscreen-bg">
+
+<head>
+	<title>Login | Recursos Humanos ITR</title>
+	
+	
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<!-- VENDOR CSS -->
+	<link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="assets/vendor/linearicons/style.css">
+	<!-- MAIN CSS -->
+	<link rel="stylesheet" href="assets/css/main.css">
+	<!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+	<link rel="stylesheet" href="assets/css/demo.css">
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+
+</head>
+
+<body>
+    
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+           
+            <div class="container-fluid">                
+               
+                <div id="navbar-menu">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle icon-menu" data-toggle="dropdown">
+                                 Notificaciones
+                                <i class="lnr lnr-alarm"></i>
+                                <span class="badge bg-danger">5</span>
+                            </a>
+                            <ul class="dropdown-menu notifications">
+                                <li><a href="#" class="notification-item"><span class="dot bg-warning"></span>5 Colaboradores añadidos</a></li>
+                                <li><a href="#" class="notification-item"><span class="dot bg-danger"></span>2 Personas necesitan renovar Dui</a></li>
+                                <li><a href="#" class="notification-item"><span class="dot bg-success"></span>Estamos Bien</a></li>
+                                <li><a href="#" class="notification-item"><span class="dot bg-warning"></span>Weekly meeting in 1 hour</a></li>
+                                <li><a href="#" class="notification-item"><span class="dot bg-success"></span>Your request has been approved</a></li>
+                                <li><a href="#" class="more">Ver más Notificaiones</a></li>
+                            </ul>
+                        </li>                        
+                        <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="lnr lnr-license"></i> <span>Tu Perfil</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#" onclick="modalProfile()"><i class="lnr"></i> <span>Editar perfil</span></a></li>
+                                    
+                                    <li><a href="#"data-toggle="modal" data-target="#perfil-pass"><i class="lnr"></i> <span>Cambiar clave</span></a></li>
+
+                                    <li><a href="#" onclick="signOff()"><i class="lnr"></i> <span>Salir</span></a></li>
+                                </ul>
+                        </li>
+                        <!-- <li>
+                            <a class="update-pro" href="https://www.themeineed.com/downloads/klorofil-pro-bootstrap-admin-dashboard-template/?utm_source=klorofil&utm_medium=template&utm_campaign=KlorofilPro" title="Upgrade to Pro" target="_blank"><i class="fa fa-rocket"></i> <span>UPGRADE TO PRO</span></a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- END NAVBAR -->
+       
+      <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              El colaborador "Carlos Benito" ha solicitado un permiso
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+<!--Modal modificar propio perfil-->
+<div class="modal fade bd-modificar-modal-xl" id="perfil" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalTitulo">Datos de los Usuarios</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                        <form method="post" id="perfil-update">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="Nombres-P">Nombres</label>
+                                    <input type="Text" class="form-control" id="Nombres-P" placeholder="Nombres" name="Nombres-P">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="Apellidos-P">Apellidos</label>
+                                    <input type="Text" class="form-control" id="Apellidos-P" placeholder="Apellidos" name="Apellidos-P">
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="Correo-P">Correo electonico</label>
+                                    <input type="email" class="form-control" id="Correo-P" aria-describedby="emailHelp" placeholder="Correo Institucional" name="Correo-P">
+                                    <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>
+    
+                                <div class="form-group col-md-3">
+                                    <label for="userName-P">User Name</label>
+                                    <input type="text" class="form-control" id="userName-P" aria-describedby="emailHelp" placeholder="User" name="userName-P">
+                                    <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>				
+                    
+                            </div>                            
+                    </div>					
+                </div>			  
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Modficar</button>
+                </form>	
+            </div>
+            </div>
+        </div>
+    <!--Modal modificar propio perfil-->
+
+    <!--Modal modificar password-->
+
+<div class="modal fade bd-modificar-modal-xl" id="perfil-pass" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalTitulo">Datos de los Usuarios</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                        <form method="post" id="pass-update">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="clave_actual_1">Contraseña</label>
+                                    <input type="password" class="form-control" id="clave_actual_1" aria-describedby="emailHelp" placeholder="Contraseña Institucional" name="clave_actual_1">
+                                    <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>
+    
+                                <div class="form-group col-md-6">
+                                    <label for="clave_actual_2">Repetir Contraseña</label>
+                                    <input type="password" class="form-control" id="clave_actual_2" aria-describedby="emailHelp" placeholder="Repetir" name="clave_actual_2">
+                                    <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>
+    
+                                <div class="form-group col-md-6">
+                                    <label for="clave_nueva_1">Nueva Contraseña</label>
+                                    <input type="password" class="form-control" id="clave_nueva_1" aria-describedby="emailHelp" placeholder="Nueva Contraseña Institucional" name="clave_nueva_1">
+                                    <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>
+    
+                                <div class="form-group col-md-6">
+                                    <label for="clave_nueva_2">Confirmar Contraseña</label>
+                                    <input type="password" class="form-control" id="clave_nueva_2" aria-describedby="emailHelp" placeholder="Confirmar Institucional" name="clave_nueva_2">
+                                    <small id="emailHelp" class="form-text text-muted"></small>
+                                </div>								
+                            </div>                            
+                    </div>					
+                </div>			  
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Modficar</button>
+                </form>	
+            </div>
+            </div>
+        </div>
+
+
+
+        <div class="panel">
+                <div class="panel-heading">
+                    <h1 class="panel-title text-center">Confirmar Permisos</h1>
+                </div>
+                <div class="panel-body">      
+                    <div class="form-row">                                  
+                                               
+                        <div class="col-sm-12 col-lg-12">
+                         <textarea class="form-control" placeholder="Mansaje al colaborador" rows="4"></textarea>
+                        </div>                                                                      
+                        <br>
+                        <br>
+                        
+                            <a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#exampleModal"> Dar permiso</a>          
+
+                            <a class="btn btn-danger btn-lg btn-block" href="permiso.html"> Denegar permiso</a>                               
+                        
+                            <body> 
+
+                                <div id="wrapper">
+                                        <?php
+                                            require_once '../backend/core/helpers/menu.php';	
+                                        ?>
+                                                            
+                                            <!--Incio de graficas-->
+                                            <div class="main">					
+                                                <div class="main-content">
+                                                    <div class="container-fluid">
+                                                        <h3 class="page-title">Graficas y Rerportes</h3>
+                                                        
+                                                        <div class="row">
+                                                            
+                                                            <div class="col-md-6"> <!--Inicio de grafica--> 
+                                                                <div class="panel">
+                                                                    <div class="panel-heading">
+                                                                        <h3 class="panel-title"> Tipos de Usuario </h3><!--Titulo de grafica-->									
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <canvas id='grafico1'></canvas> <!--Id de la grafica-->
+                                                                        <a href="../Backend/libraries/reportes/reportetipousuario.php" target="_blank" class="btn btn-primary btn-block"> Reporte </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!--Fin de grafica-->
+                            
+                                                            <div class="col-md-6"> <!--Inicio de grafica--> 
+                                                                <div class="panel">
+                                                                    <div class="panel-heading">
+                                                                        <h3 class="panel-title"> Colaboradores por genero </h3><!--Titulo de grafica-->
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <canvas id='genero-colaboradores'></canvas> <!--Id de la grafica-->
+                                                                        <a href="../Backend/libraries/reportes/reportegenero.php" target="_blank" class="btn btn-primary btn-block"> Reporte </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!--Fin de grafica-->
+                            
+                                                            <div class="col-md-6"> <!--Inicio de grafica--> 
+                                                                <div class="panel">
+                                                                    <div class="panel-heading">
+                                                                        <h3 class="panel-title"> Colaboradores por religion </h3><!--Titulo de grafica-->
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <canvas id='religion-colaboradores'></canvas> <!--Id de la grafica-->
+                                                                        <a href="../Backend/libraries/reportes/reportereligion.php" target="_blank" class="btn btn-primary btn-block"> Reporte </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!--Fin de grafica-->                          
+                                                            
+                                                            <div class="col-md-6"> <!--Inicio de grafica--> 
+                                                                <div class="panel">
+                                                                    <div class="panel-heading">
+                                                                        <h3 class="panel-title"> Colaboradores por servicio </h3><!--Titulo de grafica-->									
+                                                                    </div>
+                                                                    <div class="panel-body">
+                                                                        <canvas id='graficoservicio'></canvas> <!--Id de la grafica-->
+                                                                        <a href="../Backend/libraries/reportes/reporteservicio.php" target="_blank" class="btn btn-primary btn-block"> Reporte </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div><!--Fin de grafica-->                            
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div><!-- END MAIN CONTENT -->
+                                            </div><!-- END MAIN --><!--Fin de graficas-->
+                                </div>	<!--Wrapper Fin-->
+                            
+                               
+                                
+                                    
+                            
+                            </body>
+                        </div>                                                
+                        
+                    </div>                    
+                </div>
+            </div>
+
+
+
+        
+    
+
+            <script src="assets/vendor/jquery/jquery.min.js"></script>	
+            <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+            <script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+            <script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+            <script src="assets/vendor/chartist/js/chartist.min.js"></script>
+            <script src="assets/scripts/klorofil-common.js"></script>
+        
+            <script src="../Backend/libraries/sweetalert.min.js"></script><!--Libreria para los mensajes de confirmacion-->
+            <script src="../Backend/core/helpers/validator.js"></script><!--Verfica si es un json-->
+            <script src="../Backend/core/helpers/components.js"></script><!--Metodos eliminar, llenar combobox-->
+            <script src="../Backend/core/controllers/account.js"></script><!--Para el manejo de sesiones--> 
+            <script src="../Backend/libraries/Chart.min.js"></script>
+                                <!--Script de charts js-->
+                                <script src="../Backend/core/controllers/charts.js"></script>          
+            
+
+</body>
+
+</html>
