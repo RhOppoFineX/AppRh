@@ -1,16 +1,16 @@
 <!-- NAVBAR -->
     <nav class="navbar navbar-default navbar-fixed-top">
 					<div class="brand">
-						<a href="index.php"><img src="assets/img/logo-ricaldone.png" alt="Klorofil Logo" class="img-responsive logo" width="100px" height="100px"></a>
+						<a href="#"><img src="assets/img/logo-ricaldone.png" alt="Klorofil Logo" class="img-responsive logo" width="100px" height="100px"></a>
 					</div>
 					<div class="container-fluid">
 						<div class="navbar-btn">
 							<button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
 						</div>
-						<form class="navbar-form navbar-left">
+						<form class="navbar-form navbar-left" method="post" id='form-buscar-colaborador'>
 							<div class="input-group">
-								<input type="text" value="" class="form-control" placeholder="Buscar Colaborador">
-								<span class="input-group-btn"><button type="button" class="btn btn-warning">Go</button></span>
+								<input type="text" value="" class="form-control" placeholder="Buscar Colaborador" id="buscar_colaborador" name="buscar_colaborador">
+								<span class="input-group-btn"><button type="submit" class="btn btn-warning">Go</button></span>
 							</div>
 						</form>
 						<!-- <div class="navbar-btn navbar-btn-right">
@@ -81,15 +81,16 @@
 									<a href="#subPagesCruds" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Datos Colaborador</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 									<div id="subPagesCruds" class="collapse ">
 										<ul class="nav"><!--Colaborador-->
-											<li><a href="datos-colaborador.php" class=""><i class="lnr lnr-dice"></i> <span>Datos Personales</span></a></li>
+											<li><a href="colaborador.php" class=""><i class="lnr lnr-dice"></i> <span>Datos Personales</span></a></li>
 											<li><a href="datos-identificacion.php" class=""><i class="lnr lnr-dice"></i> <span>Identificación</span></a></li>
-											<li><a href="datos-familiares.php" class=""><i class="lnr lnr-dice"></i> <span>Familiares</span></a></li>
+											<li><a href="datos-identificacion.php" class=""><i class="lnr lnr-dice"></i> <span>Familiares</span></a></li>
 											<li><a href="datos-educacion.php" class=""><i class="lnr lnr-dice"></i> <span>Educación</span></a></li>
 											<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Más Conocimientos</span></a></li>	
 											<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Experiencia Laboral</span></a></li>
 											<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Salud</span></a></li>
-											<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Area Laboral</span></a></li>
-											<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Horarios</span></a></li>										
+											<li><a href="area-laboral.php" class=""><i class="lnr lnr-dice"></i> <span>Area Laboral</span></a></li>
+											<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Horarios</span></a></li>
+											<li><a href="area-detalle.php" class=""><i class="lnr lnr-dice"></i> <span>Area detalle</span></a></li>
 											</ul><!--Colaborador-->
 										</div>
 								</li><!--/Cruds-->
@@ -99,7 +100,7 @@
 										<ul class="nav">
 											<li><a href="tipoUsuarios.php" class=""> Tipos de Usuarios</a></li>
 											<li><a href="usuarios.php" class="">Usuarios</a></li>
-											<li><a href="area.php" class="">Area</a></li>											
+											<li><a href="area.php" class="">Area</a></li>										
 											<li><a href="puesto.php" class="">Puesto</a></li>
 											<li><a href="nacionalidad.php" class="">Nacionalidad</a></li>
 											<li><a href="nivel-idioma.php" class=""> Nivel Idioma</a></li>
@@ -116,13 +117,13 @@
 										</ul>
 									</div>
 								</li>									
-								<li><a href="elements.php" class=""><i class="lnr lnr-code"></i> <span>Elements</span></a></li>
-								<li><a href="charts.php" class=""><i class="lnr lnr-chart-bars"></i> <span>Charts</span></a></li>
-								<li><a href="panels.php" class=""><i class="lnr lnr-cog"></i> <span>Panels</span></a></li>
-								<li><a href="notifications.php" class=""><i class="lnr lnr-alarm"></i> <span>Notifications</span></a></li>					
-								<li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Tables</span></a></li>
+								<!-- <li><a href="elements.php" class=""><i class="lnr lnr-code"></i> <span>Elements</span></a></li> -->
+								<li><a href="charts.php" class=""><i class="lnr lnr-chart-bars"></i> <span>Gráficos</span></a></li>
+								<!-- <li><a href="panels.php" class=""><i class="lnr lnr-cog"></i> <span>Panels</span></a></li>
+								<li><a href="notifications.php" class=""><i class="lnr lnr-alarm"></i> <span>Notifications</span></a></li>					 -->
+								<!-- <li><a href="tables.php" class=""><i class="lnr lnr-dice"></i> <span>Tables</span></a></li>
 								<li><a href="typography.php" class=""><i class="lnr lnr-text-format"></i> <span>Typography</span></a></li>
-								<li><a href="icons.php" class=""><i class="lnr lnr-linearicons"></i> <span>Icons</span></a></li>
+								<li><a href="icons.php" class=""><i class="lnr lnr-linearicons"></i> <span>Icons</span></a></li> -->
 							</ul>
 						</nav>
 					</div>

@@ -104,11 +104,13 @@ function fillSelect(api, id, selected)
 *
 *   Returns: ninguno.
 */
-function confirmDelete(api, id, file)
+function confirmDelete(api, id, file, operacion)
 {
+    var opcion = operacion === 'delete' ? 'eliminar' : 'deshabilitar'; 
+  
     swal({
         title: 'Advertencia',
-        text: '¿Desea eliminar el registro?',
+        text: '¿Desea ' + opcion + ' el registro?',
         icon: 'warning',
         buttons: ['Cancelar', 'Aceptar'],
         closeOnClickOutside: false,
@@ -119,7 +121,7 @@ function confirmDelete(api, id, file)
             let params = new Object();
             (file) ? params = {identifier: id, filename: file} : params = {identifier: id};
             $.ajax({
-                url: api + 'delete',
+                url: api + operacion,//delete y disable según sea la operación
                 type: 'post',
                 data: params,
                 datatype: 'json'
@@ -160,6 +162,7 @@ function barGraph(canvas, xAxis, yAxis, legend, title, tipo)
     for (i = 0; i < xAxis.length; i++) {
         colors.push('#' + (Math.random().toString(16)).substring(2, 8));
     }
+    var categorias = tipo != 'bar' ? true : false;
     const context = $('#' + canvas);
     const chart = new Chart(context, {
         type: tipo,
@@ -175,7 +178,7 @@ function barGraph(canvas, xAxis, yAxis, legend, title, tipo)
         },
         options: {
             legend: {
-                display: false
+                display: categorias
             },
             title: {
                 display: true,
@@ -191,6 +194,32 @@ function barGraph(canvas, xAxis, yAxis, legend, title, tipo)
             }
         }
     });
+}
+
+//verifica si es un texto html o string 
+
+function isHtmlString(htmlText)
+{
+    var htmlArray = $.parseHTML(htmlText);
+
+    var isHtml = htmlArray.filter(function(e){ return e instanceof HTMLElement;}).length;
+
+    console.log(htmlText);
+    //console.log(htmlArray);
+
+    if (isHtml){
+        console.log(isHtml + " HTML Element(s) found.");
+        return 'Error Contacte con el administrador';
+    }
+    else{
+        console.log("No HTML Elements found!");
+        return htmlText;
+    }
+}
+
+function verColaborador()
+{
+    
 }
 
 

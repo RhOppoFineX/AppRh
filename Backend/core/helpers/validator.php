@@ -40,6 +40,7 @@ class Validator
     {
         foreach ($fields as $index => $value) {
             $value = trim($value);
+            $value = htmlentities($value);//Para ataques Xss Convierte javascript y html a texto plano
             $fields[$index] = $value;
         }
         return $fields;
@@ -112,6 +113,14 @@ class Validator
         }
     }
 
+    public function validateDate($date){
+        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function validateAlphabetic($value, $minimum, $maximum)
     {
         if (preg_match('/^[a-zA-ZñÑáÁéÉíÍóÓúÚ\s]{'.$minimum.','.$maximum.'}$/', $value)) {
@@ -138,7 +147,7 @@ class Validator
             return false;
         }
     }
-    
+
     public function validateIntegerControl($value, $minimum, $maximum)
     {
         if(preg_match('/^[1-9][0-9]{'.$minimum.','.$maximum.'}$/', $value)){
@@ -157,14 +166,28 @@ class Validator
         }
     }
 
+    // public function validatePasswordSecurity($value)
+    // {
+    //     if (preg_match('/^(?=.*\d)(?=.*[\u0021-\u002b\u003c-\u0040])(?=.*[A-Z])(?=.*[a-z])\S{8,16}$/', $value)) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+
     public function validatePassword($value)
     {
-        if (strlen($value) > 5) {
+        $uppercase = preg_match('@[A-Z]@', $value);//Al menos una mayuscula
+        $lowercase = preg_match('@[a-z]@', $value);//Al menos una minuscula
+        $number    = preg_match('@[0-9]@', $value);//Al menos numero
+        $special   = preg_match("/\W/", $value);//Al menos un caracter especial 
+
+        if (strlen($value) > 7 && $uppercase && $lowercase && $number && $special) {
             return true;
         } else {
             return false;
         }
-    }
+    }    
 
     public function saveFile($file, $path, $name)
     {

@@ -4,7 +4,7 @@ $(document).ready(function()
 });
 
 // Constante para establecer la ruta y parámetros de comunicación con la API
-const api = '../../RHOppoFineExpo/Backend/core/api/tipoUsuario.php?action=';
+const api = '../../appRH/Backend/core/api/tipoUsuario.php?action=';
 
 function fillTable(filas)
 {

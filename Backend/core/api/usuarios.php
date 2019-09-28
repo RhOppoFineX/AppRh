@@ -2,15 +2,49 @@
 require_once '../helpers/database.php';
 require_once '../helpers/validator.php';
 require_once '../models/usuarios.php';
+require_once '../../libraries/enviar.php';
 
 //Se comprueba si existe una acción a realizar, de lo contrario se muestra un mensaje de error
 if (isset($_GET['action'])) {
     session_start();
     $usuario = new Usuarios;    
-    $result = array('status' => false, 'message' => null, 'exception' => null);    
+    $email = new Email;                       
+    $result = array('status' => false, 'message' => null, 'exception' => null, 'email' => false);    
     //Se verifica si existe una sesión iniciada como administrador para realizar las operaciones correspondientes
     if (isset($_SESSION['Id_usuario'])) {
         switch ($_GET['action']) {
+
+            case 'timeAccount':
+                if($usuario->setId($_SESSION['Id_usuario'])){
+                    if($result['dataset'] = $usuario->noventaDias()){
+                        $result['status'] = true;
+                    } else {
+                        $result['exception'] = 'No se puede obtener la fecha';
+                    }
+                } else {
+                    $result['exception'] = 'Usuario Invalido';
+                }
+            break;
+
+            case 'logout':
+                if($usuario->setActividad(0)){
+                    if($usuario->setCorreo($_SESSION['Correo_usuario'])){//cambiar
+                        if($usuario->updateActividad()){
+                            if (session_destroy()){
+                                header('location: ../../../www/');
+                            } else {
+                                header('location: ../../../www/cerrar.php');
+                            }
+                        } else {
+                            $result['exception'] = 'No se ha podido actulizar la actividad del usuario';
+                        }
+                    } else {
+                        $result['exception'] = 'Correo Invalido';
+                    }
+                } else {
+                    $result['exception'] = 'Dato de activida no valido';
+                }
+            break;
            
             case 'readProfile':
                 if ($usuario->setId($_SESSION['Id_usuario'])) {
@@ -31,12 +65,16 @@ if (isset($_GET['action'])) {
                             if ($usuario->setApellidos($_POST['Apellidos-P'])) {
                                 if ($usuario->setCorreo($_POST['Correo-P'])) {
                                     if ($usuario->setAlias($_POST['userName-P'])) {
-                                        if ($usuario->updateUsuarioPropio()) {
-                                            $_SESSION['Correo_usuario'] = $usuario->getCorreo();//preguntar al profe que es esta linea
-                                            $result['status'] = true;
-                                            $result['message'] = 'Perfil modificado correctamente';
+                                        if($usuario->checkCorreo()){
+                                            if ($usuario->updateUsuarioPropio()) {
+                                                $_SESSION['Correo_usuario'] = $usuario->getCorreo();//preguntar al profe que es esta linea
+                                                $result['status'] = true;
+                                                $result['message'] = 'Perfil modificado correctamente';
+                                            } else {
+                                                $result['exception'] = 'Operación fallida';
+                                            }
                                         } else {
-                                            $result['exception'] = 'Operación fallida';
+                                            $result['exception'] = 'El correo no puede ser igual a la clave';
                                         }
                                     } else {
                                         $result['exception'] = 'Nombre de usuario incorrecto';
@@ -65,14 +103,27 @@ if (isset($_GET['action'])) {
                             if ($usuario->checkPassword()) {
                                 if ($_POST['clave_nueva_1'] == $_POST['clave_nueva_2']) {
                                     if ($usuario->setClave($_POST['clave_nueva_1'])) {
-                                        if ($usuario->changePassword()) {
-                                            $result['status'] = true;
-                                            $result['message'] = 'Contraseña cambiada correctamente';
+                                        if($_POST['clave_nueva_1'] != $_POST['clave_actual_1']){
+                                            if($usuario->checkPassForEmail()){
+                                                if($usuario->updateDate()){
+                                                    if ($usuario->changePassword()) {
+                                                        $result['status'] = true;
+                                                        $result['message'] = 'Contraseña cambiada correctamente';
+                                                    } else {
+                                                        $result['exception'] = 'Operación fallida';
+                                                    }
+                                                } else {
+                                                    $result['exception'] = 'No se ha podido actualizar la fecha';
+                                                }        
+
+                                            } else {
+                                                $result['exception'] = 'La clave no puede ser igual al correo';
+                                            }
                                         } else {
-                                            $result['exception'] = 'Operación fallida';
+                                            $result['exception'] = 'La nueva contraseña debe ser diferente a la anterior';
                                         }
                                     } else {
-                                        $result['exception'] = 'Clave nueva menor a 6 caracteres';
+                                        $result['exception'] = 'Clave nueva menor a 8 caracteres y debe tener al menos un dígito, al menos una minúscula, al menos una mayúscula y al menos un caracter no alfanumérico.';
                                     }
                                 } else {
                                     $result['exception'] = 'Claves nuevas diferentes';
@@ -81,7 +132,7 @@ if (isset($_GET['action'])) {
                                 $result['exception'] = 'Clave actual incorrecta';
                             }
                         } else {
-                            $result['exception'] = 'Clave actual menor a 6 caracteres';
+                            $result['exception'] = 'Clave actual menor a 8 caracteres y debe tener al menos un dígito, al menos una minúscula, al menos una mayúscula y al menos un caracter no alfanumérico.';
                         }
                     } else {
                         $result['exception'] = 'Claves actuales diferentes';
@@ -122,21 +173,25 @@ if (isset($_GET['action'])) {
                     if ($usuario->setApellidos($_POST['Apellidos-A'])) {
                         if ($usuario->setCorreo($_POST['Correo-A'])) {
                             if ($usuario->setAlias($_POST['userName-A'])) {
-                                if($usuario->setId_tipo_usuario($_POST['Tipos-A'])){                                
+                                if($usuario->setId_tipo_usuario($_POST['Tipos-A'])){                            
                                     if ($_POST['Contraseña-A'] == $_POST['ContraseñaDos-A']) {
-                                        if ($usuario->setClave($_POST['Contraseña-A'])) {
-                                            if ($usuario->createUsuario()) {
-                                                $result['status'] = true;
-                                                $result['message'] = 'Usuario creado correctamente';
+                                        if($_POST['Contraseña-A'] != $_POST['Correo-A']){
+                                            if ($usuario->setClave($_POST['Contraseña-A'])) {
+                                                if ($usuario->createUsuario()){
+                                                    $result['status'] = true;
+                                                    $result['message'] = 'Usuario creado correctamente';
+                                                } else {
+                                                    $result['exception'] = 'Operación fallida';
+                                                }
                                             } else {
-                                                $result['exception'] = 'Operación fallida';
-                                            }
-                                            } else {
-                                                $result['exception'] = 'Clave menor a 6 caracteres';
+                                                $result['exception'] = 'Clave menor a 8 caracteres, al menos un dígito, al menos una minúscula, al menos una mayúscula y al menos un caracter no alfanumérico.';
                                             }
                                         } else {
-                                            $result['exception'] = 'Claves diferentes';
+                                            $result['exception'] = 'Su clave no puede ser igual a su correo';
                                         }
+                                    } else {
+                                        $result['exception'] = 'Claves diferentes';
+                                    }
                                 }else{
                                     $result['exception'] = 'Selecione una opcion valida';
                                 } 
@@ -222,8 +277,39 @@ if (isset($_GET['action'])) {
                     $result['exception'] = 'No se puede eliminar a sí mismo';
                 }
                 break;
-            default:
-                exit('Acción no disponible login joder macho');
+            
+            case 'disable':
+                if($_POST['identifier'] != $_SESSION['Id_usuario']){
+                    if($usuario->setId($_POST['identifier'])){
+                        if($usuario->setEstado(0)){
+                            if($usuario->getUsuario()){
+                                if($usuario->disableUsuario()){
+                                    $result['status'] = true;
+                                    $result['message'] = 'Usuario deshabilitado correctamente';
+                                } else {
+                                    $result['exception'] = 'Operación fallida';
+                                }
+                            } else {
+                                $result['exception'] = 'Usuario inexistente';
+                            }
+                        } else {
+                            $result['exception'] = 'Estado incorrecto';
+                        }
+                    } else {
+                        $result['exception'] = 'Usuario Incorrecto';
+                    }
+                } else {
+                    $result['exception'] = 'No se puede deshabilitar a sí mismo';
+                }               
+            break;
+
+            case 'login':
+                $result['exception'] = 'Ya hay una sesión iniciada';
+            break;
+
+            default:                
+                exit('Acción no disponible');
+            break;    
         }
     } else {
         switch ($_GET['action']) {
@@ -236,40 +322,44 @@ if (isset($_GET['action'])) {
                 }
                 break;
             case 'register':
-                $_POST = $usuario->validateForm($_POST);
-                if ($usuario->setNombres($_POST['Nombres'])) {
-                    if ($usuario->setApellidos($_POST['Apellidos'])) {
-                        if ($usuario->setCorreo($_POST['Correo'])) {
-                            if ($usuario->setAlias($_POST['userName'])) {
-                                if($usuario->setId_tipo_usuario(1)){
-                                    if ($_POST['Contraseña'] == $_POST['ContraseñaDos']) {
-                                        if ($usuario->setClave($_POST['Contraseña'])) {
-                                            if ($usuario->createUsuario()) {
-                                                $result['status'] = true;
-                                                $result['message'] = 'Usuario registrado correctamente';
+                $_POST = $usuario->validateForm($_POST);                
+                if(!$usuario->readUsuarios()){
+                    if ($usuario->setNombres($_POST['Nombres'])) {
+                        if ($usuario->setApellidos($_POST['Apellidos'])) {
+                            if ($usuario->setCorreo($_POST['Correo'])) {
+                                if ($usuario->setAlias($_POST['userName'])) {
+                                    if($usuario->setId_tipo_usuario(1)){
+                                        if ($_POST['Contraseña'] == $_POST['ContraseñaDos']) {
+                                            if ($usuario->setClave($_POST['Contraseña'])) {
+                                                if ($usuario->createUsuario()) {
+                                                    $result['status'] = true;
+                                                    $result['message'] = 'Usuario registrado correctamente';
+                                                } else {
+                                                    $result['exception'] = 'Operación fallida';
+                                                }
                                             } else {
-                                                $result['exception'] = 'Operación fallida';
+                                                $result['exception'] = 'Clave menor a 8 caracteres y debe tener al menos un dígito, al menos una minúscula, al menos una mayúscula y al menos un caracter no alfanumérico.';
                                             }
                                         } else {
-                                            $result['exception'] = 'Clave menor a 6 caracteres';
+                                            $result['exception'] = 'Claves diferentes';
                                         }
-                                    } else {
-                                        $result['exception'] = 'Claves diferentes';
+                                    }else{
+                                        $result['exception'] = 'tipo de usuario incorrecto';
                                     }
-                                }else{
-                                    $result['exception'] = 'tipo de usuario incorrecto';
+                                } else {
+                                    $result['exception'] = 'Alias incorrecto';
                                 }
                             } else {
-                                $result['exception'] = 'Alias incorrecto';
+                                $result['exception'] = 'Correo incorrecto';
                             }
                         } else {
-                            $result['exception'] = 'Correo incorrecto';
+                            $result['exception'] = 'Apellidos incorrectos';
                         }
                     } else {
-                        $result['exception'] = 'Apellidos incorrectos';
+                        $result['exception'] = 'Nombres incorrectos';
                     }
                 } else {
-                    $result['exception'] = 'Nombres incorrectos';
+                    $result['exception'] = 'Ya existe al menos un usuario';
                 }
                 break;
             case 'login':
@@ -278,31 +368,45 @@ if (isset($_GET['action'])) {
                     if ($usuario->checkEmail()) {
                         if ($usuario->setClave($_POST['signin-password'])) {
                             if ($usuario->checkPassword()) {
-                                if( $result['dataset'] = $usuario->getUsuario()){
-                                    if($usuario->setIntentos(0)){
-                                        if($usuario->aumentarIntentos()){
-                                            $result['status'] = true;
-                                            $result['message'] = 'Autenticación correcta';
-                                            $_SESSION['Id_usuario'] = $usuario->getId();
-                                            $_SESSION['Correo_usuario'] = $usuario->getCorreo();
+                                if($usuario->checkActividad()){
+                                    if($usuario->setActividad(1)){
+                                        if($usuario->updateActividad()){
+                                            if($usuario->setIntentos(0)){
+                                                if($usuario->aumentarIntentos()){
+                                                    if($result['dataset'] = $usuario->getUsuario()){
+                                                        $_SESSION['Id_usuario'] = $usuario->getId();
+                                                        $_SESSION['Correo_usuario'] = $usuario->getCorreo();
+                                                        $_SESSION['Tipo_usuario'] = $usuario->getTipo_usuario();
+                                                        $result['status'] = true;
+                                                        $result['message'] = 'Autenticación correcta';                                             
+
+                                                    } else {
+                                                        $result['exception'] = 'No se pueden obtener los permisos';
+                                                    }
+                                                } else {
+                                                    $result['exception'] = 'Ha fallado';
+                                                }
+                                            } else {
+                                                $result['exception'] = 'Ha fallado';
+                                            }
                                         } else {
-                                            $result['exception'] = 'ha fallado';
+                                            $result['exception'] = 'No se ha podido cambiar la actividad';
                                         }
                                     } else {
-                                        $result['exception'] = 'Ha fallado';
-                                    }                                              
-                                    
-                                }else{
-                                    $result['message'] = 'Da error';
-                                }                                                                
+                                        $result['exception'] = 'Dato de actividad no valido';
+                                    }
+
+                                } else {
+                                    $result['exception'] = 'Ya hay una sesión activa de esta cuenta';
+                                }                                
                             } else {
                                 if($usuario->getIntentos() < 5)
-                                    $result['exception'] = 'Clave inexistente ha realizado ' .$usuario->getIntentos() . ' Intentos';
+                                    $result['exception'] = 'Clave inexistente, ha realizado ' .$usuario->getIntentos() . ' Intentos';
                                  else   
-                                    $result['exception'] = 'Cuenta Bloqueada'; 
+                                    $result['exception'] = 'Cuenta Bloqueada';
                             }
                         } else {
-                            $result['exception'] = 'Clave menor a 6 caracteres';
+                            $result['exception'] = 'Clave menor a 8 caracteres y debe tener al menos un dígito, al menos una minúscula, al menos una mayúscula y al menos un caracter no alfanumérico.';
                         }
                     } else {
                         $result['exception'] = 'Correo inexistente';
@@ -311,11 +415,96 @@ if (isset($_GET['action'])) {
                     $result['exception'] = 'Correo incorrecto';
                 }
                 break;
+
+            case 'reset':
+                $_POST = $usuario->validateForm($_POST);
+                $token = null;
+
+                if($usuario->setCorreo($_POST['Correo'])){
+                    if($usuario->checkEmail()){
+                        if($token = $email->Enviar(7, $usuario->getCorreo(), $usuario->getNombres(), $usuario->getApellidos())){//longitud del token
+                            if($usuario->setToken($token)){
+                                if($usuario->updateToken()){
+                                    $result['status'] = true;
+                                    $result['message'] = 'Se ha enviado una clave de acceso a su correo';
+                                    //$result['email'] = true;
+                                    $result['dataset'] = $usuario->getCorreo();
+                                } else {
+                                    $result['exception'] = 'No se puedo actualizar el Token';
+                                }
+                            } else {
+                                $result['exception'] = 'Token Invalido';
+                            }
+                        } else {
+                            $result['exception'] = 'No se pudo enviar el correo';
+                        }
+                    } else {
+                        $result['exception'] = 'Correo Inexistente';
+                    }
+                } else {
+                    $result['exception'] = 'Correo Incorrecto';
+                }
+
+            break;
+            
+            case 'token':
+                $_POST = $usuario->validateForm($_POST);
+
+                if($usuario->setCorreo($_POST['Correo_token'])){
+                    if($usuario->setToken($_POST['Token'])){
+                        if($result['dataset'] = $usuario->checkToken()){
+                            $result['status'] = true;
+                            $result['message'] = 'Token Correcto'; 
+                        } else {
+                            $result['exception'] = 'Token Incorrecto';
+                        }
+                    } else {
+                        $result['exception'] = 'Token Invalido';
+                    }
+                } else {    
+                    $result['exception'] = 'Correo Invalido';
+                }
+            break;
+
+            case 'pass_token':
+                $_POST = $usuario->validateForm($_POST);
+
+                if($usuario->setCorreo($_POST['Correo_verificado'])){
+                    if($usuario->checkEmail()){
+                        if($usuario->setId($usuario->getId())){
+                            if ($_POST['clave_nueva_1'] == $_POST['clave_nueva_2']) {
+                                if ($usuario->setClave($_POST['clave_nueva_1'])) {
+                                    if($usuario->changePassword()){
+                                        $result['status'] = true;
+                                        $result['message'] = 'Contraseña Reestablecida';
+                                    } else {
+                                        $result['exception'] = 'Operación fallida';
+                                    }
+                                } else {
+                                    $result['exception'] = 'Clave menor a 8 caracteres, al menos un dígito, al menos una minúscula, al menos una mayúscula y al menos un caracter no alfanumérico.';
+                                }
+                            } else {
+                                $result['exception'] = 'claves diferentes';
+                            }
+                        } else {
+                            $result['exception'] = 'Id incorrecto';
+                        }
+                    } else {
+                        $result['exception'] = 'Correo incorrecto';
+                    }
+                } else {
+                    $result['exception'] = 'Correo no valido';
+                }
+
+
+            break;
+
             default:
                 exit('Acción no disponible');
         }
     }
-	print(json_encode($result));
+    print(json_encode($result));  
+
 } else {
 	exit('Recurso denegado');
 }
